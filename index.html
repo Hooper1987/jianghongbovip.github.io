@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1a5632">
 <title>SANTAGRO FARM Management</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2/dist/css/tom-select.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2/dist/js/tom-select.complete.min.js"></script>
 <style>
@@ -150,7 +151,7 @@ label{display:block;font-weight:600;margin-bottom:4px;color:var(--muted);font-si
 
 <script>
 // ============================================================
-// EMBEDDED CONFIG — 你自己项目的实际值
+// EMBEDDED CONFIG
 // ============================================================
 const EMBEDDED_URL = 'https://vkerkwgiokdgcvgswfzh.supabase.co';
 const EMBEDDED_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrZXJrd2dpb2tkZ2N2Z3N3ZnpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwOTg1MTQsImV4cCI6MjEwNTY3NDUxNH0.pHdOjnL5v3rX_s46MvqrmPiC6zu77nDfQX9Gtsek9jk';
@@ -160,18 +161,14 @@ const EMBEDDED_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 // ============================================================
 const I18N = {
   en: {
-    // 通用
     back: "Back", add: "Add", edit: "Edit", save: "Save", cancel: "Cancel",
     update: "Update", clear: "Clear Form", close: "Close", search: "Search",
-    // 登录页
     login: "Login", logout: "Logout", username: "Username", password: "Password",
     passwordBtn: "🔑 Password", configSubtitle: "Enter your Supabase project credentials",
     projectUrl: "Project URL", anonKey: "Anon Key", saveContinue: "Save & Continue",
     loginSubtitle: "Farm Management System", scanToOpen: "📱 Scan to open on mobile",
-    // 主菜单组
     Master: "Master Data", Procurement: "Procurement", Fuel: "Fuel", Inputs: "Inputs",
     Work: "Work Orders", Maintenance: "Maintenance", System: "System",
-    // 组描述
     MasterDesc: "Suppliers, staff, fields, equipment, inputs master, lookups",
     ProcurementDesc: "Supplier invoices",
     FuelDesc: "Fuel intake, output, inventory",
@@ -179,11 +176,9 @@ const I18N = {
     WorkDesc: "Work orders, executions",
     MaintenanceDesc: "Maintenance logs, spare parts, equipment report",
     SystemDesc: "Users & permissions",
-    // 表单按钮
     saveRecord: "Save Record", updateRecord: "Update Record",
     addTitle: "Add", editTitle: "Edit",
     noRecords: "No records yet.", tapToAdd: "Tap \"+ Add\" to create one.",
-    // 提示消息
     invalidCreds: "Invalid credentials",
     enterUserPass: "Enter username and password",
     noPermission: "You do not have permission to edit this table",
@@ -202,7 +197,6 @@ const I18N = {
     noDataToExport: "No data to export",
     batchInsertFailed: "Batch insert failed: ",
     importedCount: "Imported {n}",
-    // 密码修改
     changePwd: "Change Password",
     oldPwd: "Old Password", newPwd: "New Password", confirmPwd: "Confirm New Password",
     pwdChanged: "Password changed. Please login again.",
@@ -211,41 +205,27 @@ const I18N = {
     pwdSame: "New password must be different from old password",
     pwdOldWrong: "Old password is incorrect",
     fillAllFields: "Please fill in all fields",
-    // 库存
     ok: "OK", lowStock: "LOW STOCK", outOfStock: "OUT OF STOCK",
     currentStock: "Current Stock", minimumStock: "Minimum Stock", avgPrice: "Avg Price",
     totalIn: "Total In", totalOut: "Total Out", adjustments: "Adjustments",
     openingStock: "Opening Stock", initialStock: "Initial Stock", code: "Code",
-    // 表单分节
-    section1Equip: "1. Equipment & Refuel",
-    section2Meter: "2. Meter Reading",
-    section3Refuel: "3. Refueling Source",
-    section4Auto: "4. Auto-Computed",
-    section5Details: "5. Details",
-    // 确认框
     yes: "Yes", no: "No",
-    // 用户管理
     userMgmt: "User Management", addUser: "Add User", editUser: "Edit User",
     createUser: "Create User", updateUser: "Update User",
     tablePerms: "Table Permissions", none: "None", viewOnly: "View only", viewEdit: "View + Edit",
     role: "Role", staff: "Staff", admin: "Admin (all access)",
     displayName: "Display Name",
-    // 设备报告
     totalRepairs: "Total Repairs", open: "Open", totalCost: "Total Cost", downtime: "Downtime (h)",
   },
   sw: {
-    // 通用
     back: "Rudi", add: "Ongeza", edit: "Badilisha", save: "Hifadhi", cancel: "Ghairi",
     update: "Sasisha", clear: "Futa Fomu", close: "Funga", search: "Tafuta",
-    // 登录页
     login: "Ingia", logout: "Toka", username: "Jina la mtumiaji", password: "Nenosiri",
     passwordBtn: "🔑 Nenosiri", configSubtitle: "Weka taarifa za mradi wako wa Supabase",
     projectUrl: "URL ya Mradi", anonKey: "Ufunguo wa Anon", saveContinue: "Hifadhi na Uendelee",
     loginSubtitle: "Mfumo wa Usimamizi wa Shamba", scanToOpen: "📱 Skani ili kufungua kwenye simu",
-    // 主菜单组
     Master: "Data Kuu", Procurement: "Manunuzi", Fuel: "Mafuta", Inputs: "Pembejeo",
     Work: "Maagizo ya Kazi", Maintenance: "Matengenezo", System: "Mfumo",
-    // 组描述
     MasterDesc: "Wauzaji, wafanyakazi, mashamba, vifaa, pembejeo, orodha",
     ProcurementDesc: "Ankara za wauzaji",
     FuelDesc: "Kuingiza mafuta, matumizi, akiba",
@@ -253,11 +233,9 @@ const I18N = {
     WorkDesc: "Maagizo ya kazi, utekelezaji",
     MaintenanceDesc: "Kumbukumbu za matengenezo, vipuri, ripoti ya vifaa",
     SystemDesc: "Watumiaji na ruhusa",
-    // 表单按钮
     saveRecord: "Hifadhi Kumbukumbu", updateRecord: "Sasisha Kumbukumbu",
     addTitle: "Ongeza", editTitle: "Badilisha",
     noRecords: "Hakuna kumbukumbu bado.", tapToAdd: "Gusa \"+ Ongeza\" kuunda moja.",
-    // 提示消息
     invalidCreds: "Taarifa si sahihi",
     enterUserPass: "Weka jina la mtumiaji na nenosiri",
     noPermission: "Huna ruhusa ya kubadilisha jedwali hili",
@@ -276,7 +254,6 @@ const I18N = {
     noDataToExport: "Hakuna data ya kutuma",
     batchInsertFailed: "Kuingiza kwa kundi kimeshindikana: ",
     importedCount: "Imeingiza {n}",
-    // 密码修改
     changePwd: "Badilisha Nenosiri",
     oldPwd: "Nenosiri la Zamani", newPwd: "Nenosiri Jipya", confirmPwd: "Thibitisha Nenosiri Jipya",
     pwdChanged: "Nenosiri limebadilishwa. Tafadhali ingia tena.",
@@ -285,26 +262,16 @@ const I18N = {
     pwdSame: "Nenosiri jipya lihitaji kuwa tofauti na la zamani",
     pwdOldWrong: "Nenosiri la zamani si sahihi",
     fillAllFields: "Tafadhali jaza sehemu zote",
-    // 库存
     ok: "SAWA", lowStock: "AKIBA NDOGO", outOfStock: "HAKUNA AKIBA",
     currentStock: "Akiba ya Sasa", minimumStock: "Akiba ya Chini", avgPrice: "Bei ya Wastani",
     totalIn: "Jumla ya Kuingia", totalOut: "Jumla ya Kutoka", adjustments: "Marekebisho",
     openingStock: "Akiba ya Kuanzia", initialStock: "Akiba ya Awali", code: "Msimbo",
-    // 表单分节
-    section1Equip: "1. Vifaa na Kuongeza Mafuta",
-    section2Meter: "2. Usomaji wa Mita",
-    section3Refuel: "3. Chanzo cha Kuongeza",
-    section4Auto: "4. Kuhesabiwa Kiotomatiki",
-    section5Details: "5. Maelezo",
-    // 确认框
     yes: "Ndiyo", no: "Hapana",
-    // 用户管理
     userMgmt: "Usimamizi wa Watumiaji", addUser: "Ongeza Mtumiaji", editUser: "Badilisha Mtumiaji",
     createUser: "Unda Mtumiaji", updateUser: "Sasisha Mtumiaji",
     tablePerms: "Ruhusa za Jedwali", none: "Hakuna", viewOnly: "Kuona tu", viewEdit: "Kuona + Kubadilisha",
     role: "Jukumu", staff: "Mfanyakazi", admin: "Msimamizi (ruhusa zote)",
     displayName: "Jina la Kuonyesha",
-    // 设备报告
     totalRepairs: "Jumla ya Matengenezo", open: "Wazi", totalCost: "Gharama Jumla", downtime: "Muda wa Kukaa (h)",
   }
 };
@@ -341,7 +308,6 @@ function toggleLanguage() {
   currentLang = currentLang === 'en' ? 'sw' : 'en';
   localStorage.setItem('santagro_lang', currentLang);
   applyI18n();
-  // 如果已经进入主界面，重新渲染 dashboard
   if (currentUser && document.getElementById('mainApp').style.display === 'block') {
     showDashboard();
   }
@@ -355,11 +321,10 @@ const FUELING_METHODS = ["Gas Station", "Oil Drum from Truck"];
 const STANDARD_RATE_UNITS = ["L/h", "L/100km", "L/ha"];
 const ABC_CLASSES = ["A", "B", "C"];
 const PRICE_DEVIATION_THRESHOLD = 5;
-
 const SEARCHABLE_LINK_TABLES = ['equipment','work_orders','inputs_inventory','invoices','inputs_per_work_order','parts_inventory','maintenance_logs'];
 
 // ============================================================
-// GROUPS — 用 i18n key，不直接写文字
+// GROUPS
 // ============================================================
 const GROUPS = [
   { key: "Master",      labelKey: "Master",      descKey: "MasterDesc",      icon: "🗂️" },
@@ -373,10 +338,8 @@ const GROUPS = [
 
 // ============================================================
 // TABLE DEFINITIONS
-// 每个字段的 label 保留英文（数据字段）
 // ============================================================
 const TABLES = {
-  // ===== MASTER DATA =====
   suppliers: {
     label: "Suppliers", icon: "🏢", cat: "Master", group: "Master",
     desc: "Manage suppliers / vendors",
@@ -476,8 +439,6 @@ const TABLES = {
       {col:"opening_unit_price",label:"Opening Unit Price",type:"number",allowZero:true},
     ]
   },
-
-  // ===== PROCUREMENT =====
   invoices: {
     label: "Invoices", icon: "🧾", cat: "Master", group: "Procurement",
     desc: "Supplier invoices",
@@ -491,8 +452,6 @@ const TABLES = {
       {col:"notes",label:"Notes",type:"textarea"},
     ]
   },
-
-  // ===== FUEL =====
   fuel_intake: {
     label: "Fuel Intake", icon: "⛽", cat: "Fuel", group: "Fuel",
     desc: "Record fuel purchases",
@@ -525,28 +484,22 @@ const TABLES = {
       {col:"equipment_id",label:"Equipment",type:"link",table:"equipment",showField:"equipment_name",onchange:"autoFillPreviousReading",required:true,section:"1. Equipment & Refuel"},
       {col:"fuel_type",label:"Fuel Type",type:"lookup",lookupCategory:"fuel_type",required:true,onchange:"autoFillFuelOutputPrice"},
       {col:"tank_location",label:"Tank Location",type:"select",opts:TANK_LOCATIONS,required:true,onchange:"autoFillFuelOutputPrice"},
-
       {col:"reading_type",label:"Reading Type",type:"lookup",lookupCategory:"reading_type",required:true,section:"2. Meter Reading"},
       {col:"previous_reading",label:"Previous Meter Reading (auto)",type:"number",readonly:true,previewOnly:true},
       {col:"current_reading",label:"Current Meter Reading",type:"number",recalc:true,required:true},
-
       {col:"fueling_method",label:"Fueling Method",type:"select",opts:FUELING_METHODS,required:true,section:"3. Refueling Source"},
       {col:"liters_added",label:"Liters Added (L)",type:"number",required:true,recalc:true},
-
       {col:"fuel_used",label:"Fuel Actually Consumed (L) — auto",type:"number",readonly:true,previewOnly:true,section:"4. Auto-Computed"},
       {col:"consumption_rate",label:"Consumption Rate — auto",type:"number",readonly:true,previewOnly:true},
       {col:"system_unit_price",label:"System Unit Price (L) — auto",type:"number",readonly:true,previewOnly:true},
       {col:"unit_price",label:"Unit Price (locked)",type:"number",readonly:true,previewOnly:true},
       {col:"total_value",label:"Output Value (auto) — auto",type:"number",readonly:true,previewOnly:true},
-
       {col:"date_time",label:"Date & Time",type:"datetime",required:true,section:"5. Details"},
       {col:"staff_id",label:"Responsible Person",type:"link",table:"staff",showField:"staff_name",required:true},
       {col:"observations",label:"Observations",type:"textarea"},
     ]
   },
   fuel_inventory: { label:"Fuel Inventory", icon:"📊", cat:"Dashboard", group:"Fuel", desc:"Fuel stock by location", isInventoryDashboard:'fuel' },
-
-  // ===== INPUTS =====
   inputs_intake: {
     label: "Inputs Intake", icon: "📥", cat: "Inputs", group: "Inputs",
     desc: "Record input purchases",
@@ -608,8 +561,6 @@ const TABLES = {
     ]
   },
   inputs_inventory_view: { label:"Inputs Inventory", icon:"📊", cat:"Dashboard", group:"Inputs", desc:"Input stock levels (auto)", isInventoryDashboard:'inputs' },
-
-  // ===== WORK =====
   work_orders: {
     label: "Work Orders", icon: "📋", cat: "Work", group: "Work",
     desc: "Create work orders with planned inputs",
@@ -633,8 +584,8 @@ const TABLES = {
     defaultSort: { column: "start_time", ascending: false },
     fields: [
       {col:"task_id",label:"Work Order",type:"link",table:"work_orders",showField:"task_number",onchange:"autoFillFromWorkOrder",required:true,section:"1. Work Order"},
-      {col:"service_type_actual",label:"Service Type",type:"lookup",lookupCategory:"service_type",required:true,readonly:true},
-      {col:"field_id",label:"Work Location",type:"link",table:"fields",showField:"field_name",required:true,readonly:true},
+      {col:"service_type_actual",label:"Service Type",type:"lookup",lookupCategory:"service_type",required:true,readonly:true,previewOnly:true},
+      {col:"field_id",label:"Work Location",type:"link",table:"fields",showField:"field_name",required:true,readonly:true,previewOnly:true},
       {col:"staff_id",label:"Operator",type:"link",table:"staff",showField:"staff_name",required:true},
       {col:"start_time",label:"Start Time",type:"datetime",required:true,onchange:"recalcWorkOrderExecution",section:"2. Time & Meter"},
       {col:"end_time",label:"End Time",type:"datetime",required:true,onchange:"recalcWorkOrderExecution"},
@@ -655,8 +606,6 @@ const TABLES = {
       {col:"observations",label:"Observations",type:"textarea"},
     ]
   },
-
-  // ===== MAINTENANCE =====
   maintenance_logs: {
     label: "Maintenance Logs", icon: "🛠️", cat: "Equipment", group: "Maintenance",
     desc: "Repair & service history per machine",
@@ -681,8 +630,6 @@ const TABLES = {
     ]
   },
   equipment_report: { label:"Equipment Report", icon:"📈", cat:"Dashboard", group:"Maintenance", desc:"Repair statistics per equipment", isEquipmentReport:true },
-
-  // ===== SPARE PARTS =====
   parts_inventory: {
     label: "Parts Master", icon: "🔩", cat: "Master", group: "Maintenance",
     desc: "Spare parts master + stock",
@@ -772,8 +719,6 @@ const TABLES = {
     ]
   },
   parts_inventory_view: { label:"Parts Inventory", icon:"📊", cat:"Dashboard", group:"Maintenance", desc:"Parts stock by ABC class", isPartsInventoryDashboard:true },
-
-  // ===== SYSTEM =====
   user_management: { label:"User Management", icon:"👤", cat:"Admin", group:"System", desc:"Manage user accounts", isAdmin:true },
 };
 // ============================================================
@@ -931,9 +876,26 @@ function showLogin() {
   document.getElementById('loginUser').value = preUser || '';
   document.getElementById('loginPass').value = '';
   const baseUrl = window.location.href.split('?')[0];
+  // ============ QR 本地生成（不依赖第三方 API）============
   const qrDiv = document.getElementById('loginQR');
   if (qrDiv) {
-    qrDiv.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=2&data=${encodeURIComponent(baseUrl)}" style="width:160px;height:160px;border-radius:8px" alt="QR Code" onerror="this.style.display='none'">`;
+    qrDiv.innerHTML = '';
+    try {
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(qrDiv, {
+          text: baseUrl,
+          width: 160,
+          height: 160,
+          colorDark: '#1a5632',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } else {
+        qrDiv.textContent = baseUrl;
+      }
+    } catch(e) {
+      console.warn('QR generation failed:', e);
+    }
   }
   applyI18n();
 }
@@ -1144,8 +1106,8 @@ async function showList(key) {
       const voidMark = row.voided ? ' <span style="color:#c62828;font-size:11px">[VOID]</span>' : '';
       html += `<div class="list-item${voided}">
         <div class="info">
-          <div class="main">${primaryVal || '#' + row.id}${voidMark}</div>
-          <div class="sub">${secondaryVal}</div>
+          <div class="main">${escapeHtml(String(primaryVal || '#' + row.id))}${voidMark}</div>
+          <div class="sub">${escapeHtml(String(secondaryVal))}</div>
         </div>
         ${editable ? `<div class="actions">
           ${!row.voided ? `<button onclick="showForm('${key}', ${row.id})" title="${t('edit')}">✏️</button>` : ''}
@@ -1260,6 +1222,11 @@ async function processCSVImport(key, text) {
   const cfg = TABLES[key];
   const rows = parseCSV(text);
   if (rows.length < 2) { toast('CSV must have header and at least one data row'); return; }
+  // 行数上限，防止浏览器卡死
+  if (rows.length > 501) {
+    toast('CSV too large: max 500 data rows per import. Please split your file.', 6000);
+    return;
+  }
   const headers = rows[0].map(h => h.trim().toLowerCase());
   const dataRows = rows.slice(1);
   for (const f of cfg.fields) {
@@ -1560,6 +1527,10 @@ function recalcDowntime() {
 // FORM VIEW
 // ============================================================
 async function showForm(key, editId) {
+  // 优先销毁旧的 TomSelect 实例
+  tomSelectInstances.forEach(ts => { try { ts.destroy(); } catch(e){} });
+  tomSelectInstances = [];
+
   const cfg = TABLES[key];
   const content = document.getElementById('content');
   const isEdit = editId !== undefined;
@@ -1569,9 +1540,6 @@ async function showForm(key, editId) {
     openModule(key);
     return;
   }
-
-  tomSelectInstances.forEach(ts => { try { ts.destroy(); } catch(e){} });
-  tomSelectInstances = [];
 
   for (const f of cfg.fields) {
     if (f.type === 'link' || f.type === 'multilink') await loadLinkCacheForField(f);
@@ -1621,7 +1589,7 @@ async function showForm(key, editId) {
     } else if (f.type === 'textarea') {
       fieldsHtml += `<textarea id="${id}" rows="3" placeholder="${escapeHtml(f.label)}" ${readonlyAttr}>${escapeHtml(val)}</textarea>`;
     } else if (f.type === 'number') {
-      fieldsHtml += `<input id="${id}" type="number" step="any" value="${val}" placeholder="0" ${readonlyAttr} ${onchangeAttr} ${recalcAttr}>`;
+      fieldsHtml += `<input id="${id}" type="number" step="any" min="0" value="${val}" placeholder="0" ${readonlyAttr} ${onchangeAttr} ${recalcAttr}>`;
     } else if (f.type === 'range') {
       const pctVal = val === '' ? 0 : Number(val);
       fieldsHtml += `<div class="slider-wrap">
@@ -1700,7 +1668,7 @@ async function showForm(key, editId) {
       ${fieldsHtml}
       ${extraSectionHtml}
       <div class="form-actions">
-        <button class="btn btn-primary" onclick="saveRecord('${key}', ${isEdit ? editId : 'null'})">${isEdit ? t('updateRecord') : t('saveRecord')}</button>
+        <button id="btn_save_record" class="btn btn-primary" onclick="saveRecord('${key}', ${isEdit ? editId : 'null'})">${isEdit ? t('updateRecord') : t('saveRecord')}</button>
         <button class="btn btn-outline" onclick="clearForm('${key}')">${t('clear')}</button>
       </div>
     </div>
@@ -1819,7 +1787,7 @@ async function addPlannedInputRow(data) {
   div.innerHTML = `
     <div style="flex:2"><label>Input Item</label><select class="planned-input-select" onchange="onPlannedInputChange('${rowId}')">${optsHtml}</select></div>
     <div style="flex:0 0 90px"><label>Unit</label><input type="text" class="planned-unit" value="${escapeHtml(initialUnit)}" readonly placeholder="—"></div>
-    <div style="flex:1"><label>Qty</label><input type="number" step="any" class="planned-qty" value="${data ? (data.quantity_used ?? '') : ''}" placeholder="0"></div>
+    <div style="flex:1"><label>Qty</label><input type="number" step="any" min="0" class="planned-qty" value="${data ? (data.quantity_used ?? '') : ''}" placeholder="0"></div>
     <div style="flex:0 0 auto;padding-bottom:4px"><button type="button" class="btn btn-danger btn-sm" onclick="document.getElementById('${rowId}').remove()">✕</button></div>
   `;
   rows.appendChild(div);
@@ -1863,7 +1831,7 @@ async function addPartsUsedRow(data) {
     <div style="flex:2"><label>Part</label><select class="planned-input-select" onchange="onPartsUsedChange('${rowId}')">${optsHtml}</select></div>
     <div style="flex:0 0 80px"><label>Unit</label><input type="text" class="planned-unit" value="${escapeHtml(initialUnit)}" readonly placeholder="—"></div>
     <div style="flex:0 0 90px"><label>Unit Price</label><input type="number" step="any" class="planned-price" value="${initialPrice.toFixed(2)}" readonly></div>
-    <div style="flex:1"><label>Qty</label><input type="number" step="any" class="planned-qty" value="${data ? (data.quantity_used ?? '') : ''}" placeholder="0" oninput="recalcPartsCost()"></div>
+    <div style="flex:1"><label>Qty</label><input type="number" step="any" min="0" class="planned-qty" value="${data ? (data.quantity_used ?? '') : ''}" placeholder="0" oninput="recalcPartsCost()"></div>
     <div style="flex:0 0 90px"><label>Total</label><input type="text" class="planned-total" value="0.00" readonly></div>
     <div style="flex:0 0 auto;padding-bottom:4px"><button type="button" class="btn btn-danger btn-sm" onclick="document.getElementById('${rowId}').remove();recalcPartsCost();">✕</button></div>
   `;
@@ -1911,9 +1879,8 @@ function escapeHtml(s) {
 }
 
 // ============================================================
-// 补丁：所有自动计算 / 保存 / 删除函数
+// 自动计算函数（补丁段）
 // ============================================================
-
 async function autoFillFuelIntakePreview() {
   const fuelType = document.getElementById('fld_fuel_type')?.value;
   const tankLocation = document.getElementById('fld_tank_location')?.value;
@@ -2118,7 +2085,8 @@ function recalcWorkOrderExecution() {
     const startISO = mergeDatetime(startTime, startTimeT || '00:00');
     const endISO = mergeDatetime(endTime, endTimeT || '00:00');
     if (startISO && endISO) {
-      const hours = (new Date(endISO) - new Date(startISO)) / 3600000;
+      const msDiff = Math.max(0, new Date(endISO) - new Date(startISO));
+      const hours = msDiff / 3600000;
       if (perHourEl) perHourEl.value = hours > 0 ? (consumed / hours).toFixed(2) : '0';
     }
   } else {
@@ -2265,7 +2233,11 @@ async function revertInventoryEffect(key, oldRecord) {
         await sb.from('parts_inventory').update({ current_stock: newStock }).eq('id', oldRecord.part_id);
       }
     }
-  } catch (e) { console.warn('revertInventoryEffect failed:', e); }
+  } catch (e) {
+    console.error('revertInventoryEffect failed:', e);
+    toast(t('errorPrefix') + ' Inventory rollback failed: ' + e.message, 5000);
+    throw e;
+  }
 }
 
 async function applyInventoryEffect(key, record) {
@@ -2334,7 +2306,30 @@ async function checkStockShortage(key, record) {
   return { shortage: currentStock - requiredQty < 0, currentStock, requiredQty, itemName };
 }
 
+// ============================================================
+// 保存（防重复提交包装）
+// ============================================================
 async function saveRecord(key, editId) {
+  // 防重复提交：禁用保存按钮
+  const saveBtn = document.getElementById('btn_save_record');
+  if (saveBtn) {
+    if (saveBtn.disabled) return;
+    saveBtn.disabled = true;
+    saveBtn.style.opacity = '0.6';
+    saveBtn.style.cursor = 'not-allowed';
+  }
+  try {
+    await _doSaveRecord(key, editId);
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.style.opacity = '';
+      saveBtn.style.cursor = '';
+    }
+  }
+}
+
+async function _doSaveRecord(key, editId) {
   const cfg = TABLES[key];
   const record = {};
   const errors = [];
@@ -2392,7 +2387,15 @@ async function saveRecord(key, editId) {
     if (!ok) { toast(t('opCancelled')); return; }
   }
 
-  if (editId && oldRecord) await revertInventoryEffect(key, oldRecord);
+  // 编辑时：先回滚旧库存影响
+  if (editId && oldRecord) {
+    try {
+      await revertInventoryEffect(key, oldRecord);
+    } catch (e) {
+      toast(t('errorPrefix') + ' ' + e.message, 5000);
+      return;
+    }
+  }
 
   let recordId = editId;
   if (editId) {
@@ -2400,10 +2403,29 @@ async function saveRecord(key, editId) {
     if (error) { toast(t('errorPrefix') + error.message); return; }
     toast(t('recordUpdated'));
   } else {
-    const { data, error } = await sb.from(key).insert(record).select('id').single();
-    if (error) { toast(t('errorPrefix') + error.message); return; }
-    recordId = data.id;
-    toast(t('recordSaved'));
+    // 自动编号冲突时重试
+    let attempts = 0;
+    let inserted = false;
+    while (attempts < 3) {
+      const { data, error } = await sb.from(key).insert(record).select('id').single();
+      if (!error) {
+        recordId = data.id;
+        inserted = true;
+        toast(t('recordSaved'));
+        break;
+      }
+      if (error.code === '23505' && cfg.autoNumber) {
+        record[cfg.autoNumber.field] = await generateNextDocNumber(cfg.autoNumber, key);
+        attempts++;
+        continue;
+      }
+      toast(t('errorPrefix') + error.message);
+      return;
+    }
+    if (!inserted) {
+      toast(t('errorPrefix') + ' Could not generate unique document number after 3 attempts', 5000);
+      return;
+    }
   }
 
   await applyInventoryEffect(key, record);
@@ -2448,7 +2470,22 @@ async function deleteRecord(key, id) {
     const { data } = await sb.from(key).select('*').eq('id', id).single();
     record = data;
   }
-  if (record) await revertInventoryEffect(key, record);
+  // 先删子表
+  if (key === 'work_orders') {
+    await sb.from('inputs_per_work_order').delete().eq('work_order_id', id);
+  }
+  if (key === 'maintenance_logs') {
+    await sb.from('maintenance_parts').delete().eq('maintenance_log_id', id);
+  }
+  // 回滚库存
+  if (record) {
+    try {
+      await revertInventoryEffect(key, record);
+    } catch (e) {
+      toast(t('errorPrefix') + ' ' + e.message, 5000);
+      return;
+    }
+  }
   const { error } = await sb.from(key).delete().eq('id', id);
   if (error) { toast(t('errorPrefix') + error.message); return; }
   toast(t('recordDeleted'));
@@ -2480,7 +2517,7 @@ async function showInventoryDashboard(key) {
       const badgeText = status === 'out' ? t('outOfStock') : status === 'low' ? t('lowStock') : t('ok');
       html += `<div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <strong style="font-size:16px">${item.fuel_type} — ${item.tank_location}</strong>
+          <strong style="font-size:16px">${escapeHtml(String(item.fuel_type))} — ${escapeHtml(String(item.tank_location))}</strong>
           <span class="inv-badge ${badgeClass}">${badgeText}</span>
         </div>
         <div class="inv-row"><span class="label">${t('initialStock')}</span><span class="value">${Number(item.initial_stock || 0).toFixed(1)} ${item.unit || 'L'}</span></div>
@@ -2511,7 +2548,7 @@ async function showInventoryDashboard(key) {
       const badgeText = status === 'out' ? t('outOfStock') : status === 'low' ? t('lowStock') : t('ok');
       html += `<div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <strong style="font-size:16px">${item.input_name}</strong>
+          <strong style="font-size:16px">${escapeHtml(String(item.input_name))}</strong>
           <span class="inv-badge ${badgeClass}">${badgeText}</span>
         </div>
         <div class="inv-row"><span class="label">${t('openingStock')}</span><span class="value">${Number(item.opening_stock || 0).toFixed(1)}</span></div>
@@ -2568,11 +2605,11 @@ async function showPartsInventoryDashboard(key) {
       const badgeText = status === 'out' ? t('outOfStock') : status === 'low' ? t('lowStock') : t('ok');
       html += `<div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <strong style="font-size:15px">${item.part_name}</strong>
+          <strong style="font-size:15px">${escapeHtml(String(item.part_name))}</strong>
           <span><span class="inv-badge ${clsBadge}">${cls}</span> <span class="inv-badge ${badgeClass}">${badgeText}</span></span>
         </div>
-        <div class="inv-row"><span class="label">${t('code')}</span><span class="value">${item.part_code || '-'}</span></div>
-        <div class="inv-row"><span class="label">Location</span><span class="value">${[item.warehouse_zone, item.bin_location].filter(Boolean).join(' / ') || '-'}</span></div>
+        <div class="inv-row"><span class="label">${t('code')}</span><span class="value">${escapeHtml(String(item.part_code || '-'))}</span></div>
+        <div class="inv-row"><span class="label">Location</span><span class="value">${escapeHtml([item.warehouse_zone, item.bin_location].filter(Boolean).join(' / ') || '-')}</span></div>
         <div class="inv-row" style="border-top:2px solid #333;padding-top:10px;margin-top:6px">
           <span class="label" style="font-weight:700">${t('currentStock')}</span>
           <span class="value" style="font-size:18px">${current.toFixed(1)}</span>
@@ -2605,8 +2642,8 @@ async function showEquipmentReport() {
     const totalDowntime = eqLogs.reduce((s,l) => s + (Number(l.downtime_hours) || 0), 0);
     const openCount = eqLogs.filter(l => l.status === 'Open' || l.status === 'In Progress').length;
     html += `<div class="card">
-      <div style="margin-bottom:12px"><strong style="font-size:16px">${eq.equipment_name}</strong>
-        <span style="color:#666;font-size:13px"> (${eq.equipment_code})</span></div>
+      <div style="margin-bottom:12px"><strong style="font-size:16px">${escapeHtml(String(eq.equipment_name))}</strong>
+        <span style="color:#666;font-size:13px"> (${escapeHtml(String(eq.equipment_code || ''))})</span></div>
       <div class="report-summary">
         <div><div class="num">${eqLogs.length}</div><div class="lbl">${t('totalRepairs')}</div></div>
         <div><div class="num">${openCount}</div><div class="lbl">${t('open')}</div></div>
@@ -2638,11 +2675,11 @@ async function showUserManagement() {
     const editCount = u.role === 'admin' ? 'All' : (u.editable_tables ? u.editable_tables.length : 0) + ' editable';
     html += `<div class="list-item">
       <div class="info">
-        <div class="main">${u.display_name || u.username}</div>
-        <div class="sub">@${u.username} · ${u.role} · ${viewCount}, ${editCount}</div>
+        <div class="main">${escapeHtml(String(u.display_name || u.username))}</div>
+        <div class="sub">@${escapeHtml(String(u.username))} · ${u.role} · ${viewCount}, ${editCount}</div>
       </div>
       <div class="actions">
-        <button onclick="showUserQR('${u.username}','${u.display_name || u.username}')" title="QR Code">📱</button>
+        <button onclick="showUserQR('${escapeHtml(String(u.username))}','${escapeHtml(String(u.display_name || u.username))}')" title="QR Code">📱</button>
         <button onclick="showUserForm(${u.id})" title="${t('edit')}">✏️</button>
         ${u.username !== 'admin' ? `<button onclick="deleteUser(${u.id})" title="${t('delete')}">🗑️</button>` : ''}
       </div>
@@ -2655,7 +2692,6 @@ async function showUserManagement() {
 function showUserQR(username, displayName) {
   const baseUrl = window.location.href.split('?')[0].split('#')[0];
   const loginUrl = baseUrl + '?u=' + encodeURIComponent(username);
-  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=2&data=${encodeURIComponent(loginUrl)}`;
   const old = document.getElementById('qrModal');
   if (old) old.remove();
   const modal = document.createElement('div');
@@ -2666,11 +2702,28 @@ function showUserQR(username, displayName) {
     <div style="background:#fff;border-radius:16px;padding:28px;text-align:center;max-width:340px;width:100%">
       <h3 style="color:#1a5632;margin-bottom:4px">📱 ${escapeHtml(displayName)}</h3>
       <p style="color:#666;font-size:13px;margin-bottom:16px">Scan with phone camera to login</p>
-      <img src="${qrSrc}" style="width:240px;height:240px;border-radius:8px" alt="QR">
+      <div id="userQrContainer" style="display:inline-block;padding:8px;background:#fff;border-radius:8px"></div>
       <p style="font-size:11px;color:#999;margin-top:8px">Username: <strong>${escapeHtml(username)}</strong></p>
       <button class="btn btn-outline" style="width:100%;margin-top:16px" onclick="document.getElementById('qrModal').remove()">${t('close')}</button>
     </div>`;
   document.body.appendChild(modal);
+  const qrContainer = document.getElementById('userQrContainer');
+  try {
+    if (typeof QRCode !== 'undefined') {
+      new QRCode(qrContainer, {
+        text: loginUrl,
+        width: 240,
+        height: 240,
+        colorDark: '#1a5632',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    } else {
+      qrContainer.textContent = loginUrl;
+    }
+  } catch(e) {
+    console.warn('QR generation failed:', e);
+  }
 }
 
 async function showUserForm(editId) {
@@ -2702,8 +2755,8 @@ async function showUserForm(editId) {
     <h3>${editId ? t('editUser') : t('addUser')}</h3>
   </div>
   <div class="form-container"><div class="card">
-    <div class="form-group"><label>${t('username')}</label><input id="usr_username" value="${user.username || ''}" placeholder="username"></div>
-    <div class="form-group"><label>${t('displayName')}</label><input id="usr_displayname" value="${user.display_name || ''}" placeholder="Display name"></div>
+    <div class="form-group"><label>${t('username')}</label><input id="usr_username" value="${escapeHtml(user.username || '')}" placeholder="username"></div>
+    <div class="form-group"><label>${t('displayName')}</label><input id="usr_displayname" value="${escapeHtml(user.display_name || '')}" placeholder="Display name"></div>
     <div class="form-group"><label>${editId ? t('newPwd') + ' (blank = keep)' : t('password')}</label><input id="usr_password" type="password"></div>
     <div class="form-group"><label>${t('role')}</label><select id="usr_role">
       <option value="staff" ${user.role === 'staff' ? 'selected' : ''}>${t('staff')}</option>

@@ -141,6 +141,7 @@ label{display:block;font-weight:600;margin-bottom:4px;color:var(--muted);font-si
 <h2 id="headerTitle">🌾 SANTAGRO FARM</h2>
 <div class="user-area">
 <button class="lang-btn" onclick="toggleLanguage()" title="Change Language"><span id="langLabel">SW</span></button>
+<button class="lang-btn" onclick="refreshCurrentView()" title="Refresh Data" style="margin-right:4px">🔄</button>
 <span class="user-name" id="userName"></span>
 <button class="logout-btn" onclick="showChangePassword()" style="margin-right:6px" data-i18n="passwordBtn">🔑 Password</button>
 <button class="logout-btn" onclick="logout()" data-i18n="logout">Logout</button>
@@ -169,12 +170,12 @@ const I18N = {
     loginSubtitle: "Farm Management System", scanToOpen: "📱 Scan to open on mobile",
     Master: "Master Data", Procurement: "Procurement", Fuel: "Fuel", Inputs: "Inputs",
     Work: "Work Orders", Maintenance: "Maintenance", System: "System",
-    MasterDesc: "Suppliers, staff, fields, equipment, inputs master, lookups",
+    MasterDesc: "Suppliers, staff, fields, equipment, inputs & parts master, lookups",
     ProcurementDesc: "Supplier invoices",
     FuelDesc: "Fuel intake, output, inventory",
     InputsDesc: "Inputs intake, dispatch, inventory",
     WorkDesc: "Work orders, executions",
-    MaintenanceDesc: "Maintenance logs, spare parts, equipment report",
+    MaintenanceDesc: "Maintenance logs, spare parts movements, equipment report",
     SystemDesc: "Users & permissions",
     saveRecord: "Save Record", updateRecord: "Update Record",
     addTitle: "Add", editTitle: "Edit",
@@ -226,12 +227,12 @@ const I18N = {
     loginSubtitle: "Mfumo wa Usimamizi wa Shamba", scanToOpen: "📱 Skani ili kufungua kwenye simu",
     Master: "Data Kuu", Procurement: "Manunuzi", Fuel: "Mafuta", Inputs: "Pembejeo",
     Work: "Maagizo ya Kazi", Maintenance: "Matengenezo", System: "Mfumo",
-    MasterDesc: "Wauzaji, wafanyakazi, mashamba, vifaa, pembejeo, orodha",
+    MasterDesc: "Wauzaji, wafanyakazi, mashamba, vifaa, pembejeo na vipuri, orodha",
     ProcurementDesc: "Ankara za wauzaji",
     FuelDesc: "Kuingiza mafuta, matumizi, akiba",
     InputsDesc: "Kuingiza pembejeo, kusambaza, akiba",
     WorkDesc: "Maagizo ya kazi, utekelezaji",
-    MaintenanceDesc: "Kumbukumbu za matengenezo, vipuri, ripoti ya vifaa",
+    MaintenanceDesc: "Kumbukumbu za matengenezo, mienendo ya vipuri, ripoti ya vifaa",
     SystemDesc: "Watumiaji na ruhusa",
     saveRecord: "Hifadhi Kumbukumbu", updateRecord: "Sasisha Kumbukumbu",
     addTitle: "Ongeza", editTitle: "Badilisha",
@@ -439,6 +440,29 @@ const TABLES = {
       {col:"opening_unit_price",label:"Opening Unit Price",type:"number",allowZero:true},
     ]
   },
+  parts_inventory: {
+    label: "Parts Master", icon: "🔩", cat: "Master", group: "Master",
+    desc: "Spare parts master + stock",
+    defaultSort: { column: "part_name", ascending: true },
+    fields: [
+      {col:"part_code",label:"Part Code",type:"text",required:true},
+      {col:"part_name",label:"Part Name",type:"text",required:true},
+      {col:"category",label:"Category",type:"lookup",lookupCategory:"part_category",required:true},
+      {col:"unit",label:"Unit",type:"lookup",lookupCategory:"unit",required:true},
+      {col:"brand",label:"Brand",type:"text"},
+      {col:"model",label:"Model",type:"text"},
+      {col:"specification",label:"Specification",type:"text"},
+      {col:"abc_class",label:"ABC Class",type:"select",opts:ABC_CLASSES,required:true,section:"2. Classification"},
+      {col:"warehouse_zone",label:"Warehouse Zone",type:"lookup",lookupCategory:"warehouse_zone",section:"3. Location"},
+      {col:"bin_location",label:"Bin Location (e.g. 03-02)",type:"text"},
+      {col:"minimum_stock",label:"Minimum Stock",type:"number",required:true,allowZero:true,section:"4. Stock"},
+      {col:"standard_cost",label:"Standard Cost",type:"number",allowZero:true},
+      {col:"supplier_id",label:"Default Supplier",type:"link",table:"suppliers",showField:"supplier_name"},
+      {col:"staff_id",label:"Responsible Person",type:"link",table:"staff",showField:"staff_name"},
+      {col:"opening_stock",label:"Opening Stock",type:"number",required:true,allowZero:true,section:"5. Opening"},
+      {col:"opening_unit_price",label:"Opening Unit Price",type:"number",allowZero:true},
+    ]
+  },
   invoices: {
     label: "Invoices", icon: "🧾", cat: "Master", group: "Procurement",
     desc: "Supplier invoices",
@@ -630,29 +654,6 @@ const TABLES = {
     ]
   },
   equipment_report: { label:"Equipment Report", icon:"📈", cat:"Dashboard", group:"Maintenance", desc:"Repair statistics per equipment", isEquipmentReport:true },
-  parts_inventory: {
-    label: "Parts Master", icon: "🔩", cat: "Master", group: "Maintenance",
-    desc: "Spare parts master + stock",
-    defaultSort: { column: "part_name", ascending: true },
-    fields: [
-      {col:"part_code",label:"Part Code",type:"text",required:true},
-      {col:"part_name",label:"Part Name",type:"text",required:true},
-      {col:"category",label:"Category",type:"lookup",lookupCategory:"part_category",required:true},
-      {col:"unit",label:"Unit",type:"lookup",lookupCategory:"unit",required:true},
-      {col:"brand",label:"Brand",type:"text"},
-      {col:"model",label:"Model",type:"text"},
-      {col:"specification",label:"Specification",type:"text"},
-      {col:"abc_class",label:"ABC Class",type:"select",opts:ABC_CLASSES,required:true,section:"2. Classification"},
-      {col:"warehouse_zone",label:"Warehouse Zone",type:"lookup",lookupCategory:"warehouse_zone",section:"3. Location"},
-      {col:"bin_location",label:"Bin Location (e.g. 03-02)",type:"text"},
-      {col:"minimum_stock",label:"Minimum Stock",type:"number",required:true,allowZero:true,section:"4. Stock"},
-      {col:"standard_cost",label:"Standard Cost",type:"number",allowZero:true},
-      {col:"supplier_id",label:"Default Supplier",type:"link",table:"suppliers",showField:"supplier_name"},
-      {col:"staff_id",label:"Responsible Person",type:"link",table:"staff",showField:"staff_name"},
-      {col:"opening_stock",label:"Opening Stock",type:"number",required:true,allowZero:true,section:"5. Opening"},
-      {col:"opening_unit_price",label:"Opening Unit Price",type:"number",allowZero:true},
-    ]
-  },
   parts_intake: {
     label: "Parts Intake", icon: "📥", cat: "Maintenance", group: "Maintenance",
     desc: "Record parts purchases",
@@ -721,7 +722,7 @@ const TABLES = {
   parts_inventory_view: { label:"Parts Inventory", icon:"📊", cat:"Dashboard", group:"Maintenance", desc:"Parts stock by ABC class", isPartsInventoryDashboard:true },
   user_management: { label:"User Management", icon:"👤", cat:"Admin", group:"System", desc:"Manage user accounts", isAdmin:true },
 };
-// ============================================================
+  // ============================================================
 // STATE
 // ============================================================
 let sb = null;
@@ -730,6 +731,26 @@ let currentTable = null;
 let linkCache = {};
 let lookupCache = {};
 let tomSelectInstances = [];
+
+// ============================================================
+// 缓存管理（选项 A）
+// ============================================================
+function clearAllCaches() {
+  linkCache = {};
+  lookupCache = {};
+  tomSelectInstances.forEach(ts => { try { ts.destroy(); } catch(e){} });
+  tomSelectInstances = [];
+  toast(currentLang === 'sw' ? 'Akiba imefutwa' : 'Cache cleared', 2000);
+}
+
+function refreshCurrentView() {
+  clearAllCaches();
+  if (currentTable) {
+    openModule(currentTable);
+  } else {
+    showDashboard();
+  }
+}
 
 // ============================================================
 // 日期格式转换
@@ -876,7 +897,6 @@ function showLogin() {
   document.getElementById('loginUser').value = preUser || '';
   document.getElementById('loginPass').value = '';
   const baseUrl = window.location.href.split('?')[0];
-  // ============ QR 本地生成（不依赖第三方 API）============
   const qrDiv = document.getElementById('loginQR');
   if (qrDiv) {
     qrDiv.innerHTML = '';
@@ -1057,6 +1077,18 @@ function goBack() { showDashboard(); }
 async function showList(key) {
   const cfg = TABLES[key];
   const content = document.getElementById('content');
+  // 清掉旧缓存，确保列表显示最新数据
+  for (const f of cfg.fields) {
+    if (f.type === 'link' || f.type === 'multilink') {
+      for (const k of Object.keys(linkCache)) {
+        if (k.startsWith(f.table + '_')) delete linkCache[k];
+      }
+    }
+    if (f.type === 'lookup' && f.lookupCategory) {
+      delete lookupCache[f.lookupCategory + '_loaded'];
+      delete lookupCache[f.lookupCategory + '_ts'];
+    }
+  }
   for (const f of cfg.fields) {
     if (f.type === 'link' || f.type === 'multilink') await loadLinkCacheForField(f);
     if (f.type === 'lookup') await loadLookupCache(f.lookupCategory);
@@ -1222,7 +1254,6 @@ async function processCSVImport(key, text) {
   const cfg = TABLES[key];
   const rows = parseCSV(text);
   if (rows.length < 2) { toast('CSV must have header and at least one data row'); return; }
-  // 行数上限，防止浏览器卡死
   if (rows.length > 501) {
     toast('CSV too large: max 500 data rows per import. Please split your file.', 6000);
     return;
@@ -1281,16 +1312,27 @@ async function processCSVImport(key, text) {
 }
 
 // ============================================================
-// LINK CACHE
+// LINK CACHE（带 5 分钟过期 + 手动清）
 // ============================================================
 async function loadLinkCache(tableName, showField, extraFields) {
   const cacheKey = tableName + '_' + showField;
-  if (linkCache[cacheKey + '_loaded']) return;
+  const now = Date.now();
+  const TTL = 5 * 60 * 1000;
+  if (linkCache[cacheKey + '_loaded'] && linkCache[cacheKey + '_ts'] && (now - linkCache[cacheKey + '_ts'] < TTL)) {
+    return;
+  }
   const cols = ['id', showField, ...(extraFields || [])].join(',');
   const { data } = await sb.from(tableName).select(cols);
   if (data) {
+    // 清掉旧条目
+    for (const k of Object.keys(linkCache)) {
+      if (k.startsWith(tableName + '_') && typeof linkCache[k] === 'object' && linkCache[k] && linkCache[k].id) {
+        delete linkCache[k];
+      }
+    }
     for (const row of data) linkCache[`${tableName}_${row.id}`] = row;
     linkCache[cacheKey + '_loaded'] = true;
+    linkCache[cacheKey + '_ts'] = now;
   }
 }
 
@@ -1305,7 +1347,7 @@ async function loadLinkCacheForField(f) {
 }
 
 // ============================================================
-// LOOKUP CACHE
+// LOOKUP CACHE（带 5 分钟过期）
 // ============================================================
 function normalizeLookupKey(v) {
   return String(v || '').toLowerCase().replace(/[\s\(\)（）]/g, '').replace(/(h|km|kg|l|t)$/i, '');
@@ -1313,7 +1355,11 @@ function normalizeLookupKey(v) {
 
 async function loadLookupCache(category) {
   if (!category) return;
-  if (lookupCache[category + '_loaded']) return;
+  const now = Date.now();
+  const TTL = 5 * 60 * 1000;
+  if (lookupCache[category + '_loaded'] && lookupCache[category + '_ts'] && (now - lookupCache[category + '_ts'] < TTL)) {
+    return;
+  }
   const { data } = await sb.from('lookup_values').select('*').eq('category', category).eq('active', 'true');
   if (data) {
     const seen = new Set(); const unique = [];
@@ -1325,6 +1371,7 @@ async function loadLookupCache(category) {
     }
     lookupCache[category] = unique;
     lookupCache[category + '_loaded'] = true;
+    lookupCache[category + '_ts'] = now;
   }
 }
 
@@ -1523,7 +1570,7 @@ function recalcDowntime() {
   if (days < 0) { el.value = '0'; return; }
   el.value = (days === 0 ? 8 : days * 24).toFixed(1);
 }
-// ============================================================
+  // ============================================================
 // FORM VIEW
 // ============================================================
 async function showForm(key, editId) {
@@ -1539,6 +1586,19 @@ async function showForm(key, editId) {
     toast(t('noPermission'));
     openModule(key);
     return;
+  }
+
+  // 打开表单时，清掉本表单引用的关联表缓存（确保下拉框看到最新数据）
+  for (const f of cfg.fields) {
+    if (f.type === 'link' || f.type === 'multilink') {
+      for (const k of Object.keys(linkCache)) {
+        if (k.startsWith(f.table + '_')) delete linkCache[k];
+      }
+    }
+    if (f.type === 'lookup' && f.lookupCategory) {
+      delete lookupCache[f.lookupCategory + '_loaded'];
+      delete lookupCache[f.lookupCategory + '_ts'];
+    }
   }
 
   for (const f of cfg.fields) {
@@ -1879,7 +1939,7 @@ function escapeHtml(s) {
 }
 
 // ============================================================
-// 自动计算函数（补丁段）
+// 自动计算函数
 // ============================================================
 async function autoFillFuelIntakePreview() {
   const fuelType = document.getElementById('fld_fuel_type')?.value;
@@ -2306,11 +2366,7 @@ async function checkStockShortage(key, record) {
   return { shortage: currentStock - requiredQty < 0, currentStock, requiredQty, itemName };
 }
 
-// ============================================================
-// 保存（防重复提交包装）
-// ============================================================
 async function saveRecord(key, editId) {
-  // 防重复提交：禁用保存按钮
   const saveBtn = document.getElementById('btn_save_record');
   if (saveBtn) {
     if (saveBtn.disabled) return;
@@ -2387,7 +2443,6 @@ async function _doSaveRecord(key, editId) {
     if (!ok) { toast(t('opCancelled')); return; }
   }
 
-  // 编辑时：先回滚旧库存影响
   if (editId && oldRecord) {
     try {
       await revertInventoryEffect(key, oldRecord);
@@ -2403,7 +2458,6 @@ async function _doSaveRecord(key, editId) {
     if (error) { toast(t('errorPrefix') + error.message); return; }
     toast(t('recordUpdated'));
   } else {
-    // 自动编号冲突时重试
     let attempts = 0;
     let inserted = false;
     while (attempts < 3) {
@@ -2470,14 +2524,12 @@ async function deleteRecord(key, id) {
     const { data } = await sb.from(key).select('*').eq('id', id).single();
     record = data;
   }
-  // 先删子表
   if (key === 'work_orders') {
     await sb.from('inputs_per_work_order').delete().eq('work_order_id', id);
   }
   if (key === 'maintenance_logs') {
     await sb.from('maintenance_parts').delete().eq('maintenance_log_id', id);
   }
-  // 回滚库存
   if (record) {
     try {
       await revertInventoryEffect(key, record);
@@ -2810,7 +2862,7 @@ async function deleteUser(id) {
   toast(t('recordDeleted'));
   showUserManagement();
 }
-// ============================================================
+  // ============================================================
 // INIT
 // ============================================================
 const savedSession = localStorage.getItem('santagro_session');
